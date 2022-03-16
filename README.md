@@ -1,5 +1,5 @@
 # Google-Research-Football-RL
-Creating a AI-agent that can play football in the google research football environment.Final project for CSE-UOI 
+Creating a AI-agent that can play football in the google research football environment.Project based on [Kaggle Competition](https://www.kaggle.com/c/google-football/overview/prizes) .Final project for CSE-UOI 
 
 # Prerequisites 
 
