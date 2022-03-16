@@ -3,8 +3,8 @@ Creating a AI-agent that can play football in the google research football envir
 
 # Prerequisites 
 
-All the stuff you need to know about environment and python libriaries is - [here](https://github.com/google-research/football)
+- All the stuff you need to know about environment and python libriaries is - [here](https://github.com/google-research/football)
 
-Observations and Actions list is - [here](https://github.com/google-research/football/blob/master/gfootball/doc/observation.md)
+- Observations and Actions list is - [here](https://github.com/google-research/football/blob/master/gfootball/doc/observation.md)
 
-Compile the GRF-Engine [instructions](https://github.com/google-research/football/blob/master/gfootball/doc/compile_engine.md#windows)
+- Compile the GRF-Engine [instructions](https://github.com/google-research/football/blob/master/gfootball/doc/compile_engine.md#windows)
