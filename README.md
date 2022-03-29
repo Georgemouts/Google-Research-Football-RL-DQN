@@ -8,3 +8,7 @@ Creating a AI-agent that can play football in the google research football envir
 - Observations and Actions list is - [here](https://github.com/google-research/football/blob/master/gfootball/doc/observation.md)
 
 - Compile the GRF-Engine [instructions](https://github.com/google-research/football/blob/master/gfootball/doc/compile_engine.md#windows)
+
+# Interact with GRF environment
+
+You can interact with GRF environment and learn how to use it through [Simple_Observations.ipynb](https://github.com/Georgemouts/Google-Research-Football-RL/blob/main/Simple_Observations.ipynb)
