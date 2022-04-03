@@ -15,4 +15,4 @@ You can interact with GRF environment and learn how to use it through [Simple_Ob
 
 # Learning & Playing 
 
-Implementing algorithm **Deep Q-Learning(DQN)**
+Implemented algorithm **Deep Q-Learning(DQN)**
