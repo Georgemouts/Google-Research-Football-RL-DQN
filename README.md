@@ -13,6 +13,6 @@ Creating a AI-agent that can play football in the google research football envir
 
 You can interact with GRF environment and learn how to use it through [Simple_Observations.ipynb](https://github.com/Georgemouts/Google-Research-Football-RL/blob/main/Simple_Observations.ipynb)
 
-# Learning and Playing 
+# Learning & Playing 
 
 Implementing algorithm **Deep Q-Learning(DQN)**
