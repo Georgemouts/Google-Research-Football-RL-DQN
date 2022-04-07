@@ -1,6 +1,11 @@
 # Google-Research-Football-RL
 Creating a AI-agent that can play football in the google research football environment.Project based on [Kaggle Competition](https://www.kaggle.com/c/google-football/overview/prizes) .Bachelor's thesis for CSE-UOI 
 
+
+
+![Game representation](https://github.com/Georgemouts/Google-Research-Football-RL/blob/main/images/grf.gif)
+
+
 # Setup the environment
 
 - All the stuff you need to know about environment and python libriaries is - [here](https://github.com/google-research/football)
