@@ -4,7 +4,7 @@ Creating a AI-agent that can play football in the google research football envir
 
 
 ![Game representation](https://github.com/Georgemouts/Google-Research-Football-RL/blob/main/images/grf.gif)
-
+![Game_representation2](https://github.com/Georgemouts/Google-Research-Football-RL/blob/main/images/grf2.gif)
 
 # Setup the environment
 
