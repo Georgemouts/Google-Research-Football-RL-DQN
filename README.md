@@ -1,4 +1,4 @@
-# Google-Research-Football-RL
+# Google-Research-Football-RL :soccer:
 Creating a AI-agent that can play football in the google research football environment.Project based on [Kaggle Competition](https://www.kaggle.com/c/google-football/overview/prizes) .Bachelor's thesis for CSE-UOI 
 
 
@@ -14,11 +14,11 @@ Creating a AI-agent that can play football in the google research football envir
 
 - Compile the GRF-Engine [instructions](https://github.com/google-research/football/blob/master/gfootball/doc/compile_engine.md#windows)
 
-# Interact with GRF environment
+# Interact with GRF environment 
 
 You can interact with GRF environment and learn how to use it through [Simple_Observations.ipynb](https://github.com/Georgemouts/Google-Research-Football-RL/blob/main/Simple_Observations.ipynb)
 
-# Learning & Playing 
+# Learning & Playing :open_book:
 
 Implemented algorithm **Deep Q-Learning(DQN)**  based on [Deepmind's paper](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
 
