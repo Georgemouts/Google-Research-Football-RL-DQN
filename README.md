@@ -31,9 +31,12 @@ We need :
 
 The environment has +1 reward for when our team scores and -1 when the opponent teams scores.
 
-Custo Rewards: 
+Custom Rewards: 
   1. Positives:
-    - When the agent has the ball and shouts ,when ball is in x>0.6 .Reward: +0.1
-    - When the agent steals the ball from the opponent , Reward: +0.05
+  
+   - When the agent has the ball and shouts ,when ball is in x>0.6 .Reward: +0.1
+   - When the agent steals the ball from the opponent , Reward: +0.05
   
   2. Negatives:
+    
+
