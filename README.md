@@ -28,3 +28,9 @@ We need :
   - Target neural network
 
 # Reward System
+
+The environment has +1 reward for when our team scores and -1 when the opponent teams scores.
+
+Custo Rewards: 
+  1.Positives:
+    -
