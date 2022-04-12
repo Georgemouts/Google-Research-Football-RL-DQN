@@ -20,4 +20,9 @@ You can interact with GRF environment and learn how to use it through [Simple_Ob
 
 # Learning & Playing 
 
-Implemented algorithm **Deep Q-Learning(DQN)**
+Implemented algorithm **Deep Q-Learning(DQN)**  based on [Deepmind's paper](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
+
+We need : 
+  - The replay buffer
+  - EpisolonGreedy action selection
+  - Target neural network
