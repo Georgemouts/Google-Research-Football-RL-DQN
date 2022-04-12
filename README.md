@@ -26,3 +26,5 @@ We need :
   - The replay buffer
   - EpisolonGreedy action selection
   - Target neural network
+
+# Reward System
