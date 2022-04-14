@@ -25,6 +25,8 @@ Implemented algorithm **Deep Q-Learning(DQN)**  based on [Deepmind's paper](http
 We need : 
   - The replay buffer
   - EpisolonGreedy action selection
+
+We dont need:
   - Target neural network
 
 # Reward System
