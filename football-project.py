@@ -198,7 +198,7 @@ class All_prints():
 
 #if __name__ == '__main__':
 #env = football_env.create_environment(env_name ='11_vs_11_easy_stochastic',render=False,representation='simple115')  #List with the 115 states 
-env = football_env.create_environment(env_name ='academy_empty_goal_close',render=True,representation='simple115v2')  #List with the 115 states 
+env = football_env.create_environment(env_name ='academy_empty_goal',render=True,representation='simple115v2')  #List with the 115 states 
 #env = gym.make("GFootball-11_vs_11_kaggle-simple115v2-v0") #List with the 115 states
 #env = football_env.create_environment(env_name ='academy_single_goal_versus_lazy',render=False,representation='simple115')
 #env = football_env.create_environment(env_name ='academy_pass_and_shoot_with_keeper',render=False,representation='simple115')
@@ -254,11 +254,11 @@ for i in range(num_of_eps) :
             new_observation,reward,done,info = env.step(Action_list[action]) #pigainei deksia action 5
             
     elif observation[89] > observation[3] + 0.05:
-            action =1
+            action =5
             new_observation,reward,done,info = env.step(Action_list[action]) #pigainei pano action 3
             print("action 3",Action_list[action])
     elif observation[89] < observation[3] - 0.05:
-            action =5
+            action =1
             new_observation,reward,done,info = env.step(Action_list[action]) #pigainei kato action 7
             print("action 7",Action_list[action])
 
