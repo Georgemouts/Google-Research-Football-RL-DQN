@@ -35,9 +35,9 @@ The environment has +1 reward for when our team scores and -1 when the opponent 
 
 Custom Rewards: 
   1. Positives:
-   - When the agent has the ball in position x > 0.6 and shouts it , **Reward += 0.1**
+   - When the agent has the ball in position x > 0.6 and shouts , **Reward += 0.1**
    - When the agent steals the ball from the opponent , **Reward+= 0.05**
   
   2. Negatives:
-    
-
+   - When the opponent steals the ball , **Reward-=0.5**
+   - When the agent has the ball in position x < 0.6 and shouuts , **Reward += 0.1**
