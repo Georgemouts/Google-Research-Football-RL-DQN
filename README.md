@@ -41,4 +41,4 @@ Custom Rewards:
   2. Negatives:
    - When the opponent steals the ball , **Reward-=0.5**
    - When the agent has the ball in position x < 0.6 and shouuts , **Reward += 0.1**
-   - Euclidean distance : **Reward = Reward - ( math.sqrt( ((y2-y1)^2) + (x2-x1)^2 ) *0.2)**
+   - Euclidean distance : ***Reward = Reward - ( math.sqrt( ((y2-y1)^2) + (x2-x1)^2 ) *0.2)***
