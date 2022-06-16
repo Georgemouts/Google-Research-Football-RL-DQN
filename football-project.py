@@ -246,12 +246,13 @@ goal_steps=[]
 for i in range(num_of_eps) : 
   score =0 
   done=False 
-  
+  eps_rew=0
   observation =env.reset()
   #print("Pinakas apo observations",observation)
   act =0 #first action will be to move right 
   shout=0 #mporei na kanei shout 1 fora se kathe ep
   timer=0 # an klepsei tin mpala kai tin kratisei pano apo 4 steps stamata
+  sprint=0 #an perasei ton antipalo kai kanei sprint tin proti fora  einai +5
   checkpoint_reward=[1,1,1,1,1]
   print(observation)
   while not done:
@@ -320,6 +321,12 @@ for i in range(num_of_eps) :
     
     #CUSTOM REWARDS-------------------------------
 
+    if((observation[0] > observation [4] +0.2)):
+      reward = reward + 5  
+
+
+    if((observation[0] > observation [4] +0.2) and (Action_list[action]==13) and (sprint ==0)): #An peraso ton antipalo kai kano sprint tin proti fora +5
+      reward =reward + 10 
     
     
     if(done ==1 and reward != 1): #if ball is out ,loses -2
