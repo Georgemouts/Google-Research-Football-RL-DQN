@@ -1,6 +1,6 @@
 #from gfootball.env.football_env import FootballEnv
-from kaggle_environments import make
-from gfootball.env.config import Config
+
+from argparse import Action
 import gfootball.env as football_env
 
 #import dqn libraries
@@ -13,28 +13,30 @@ import pandas as pd
 import itertools
 #import utils
 import random
-from collections import deque
+
 import matplotlib.pyplot as plt
-#from utils import plot_learning_curve
-#import env 
-import gym
-import gfootball 
+
+import math
+import os
+print(os.path.abspath(football_env.__file__))
+
+
 
 
 class DeepQNetwork(nn.Module):
-  def __init__(self,lr,input_dims,fc1_dims,fc2_dims,fc3_dims,n_actions):
+  def __init__(self,lr,input_dims,fc1_dims,fc2_dims,n_actions):
     super(DeepQNetwork,self).__init__()
    # self.lr=lr
     self.input_dims=input_dims
     self.fc1_dims=fc1_dims
     self.fc2_dims=fc2_dims
-    self.fc3_dims=fc3_dims
+    
     self.n_actions=n_actions
     
     self.fc1=nn.Linear(*self.input_dims,self.fc1_dims) #pass list of observations as input
     self.fc2=nn.Linear(self.fc1_dims,self.fc2_dims)
-    self.fc3=nn.Linear(self.fc2_dims,self.fc3_dims)
-    self.fc3=nn.Linear(self.fc3_dims,self.n_actions) #output number action
+    self.fc3=nn.Linear(self.fc2_dims,self.n_actions)
+    #self.fc4=nn.Linear(self.fc3_dims,self.n_actions) #output number action
 
     self.optimizer = optim.Adam(self.parameters(),lr=lr)
     self.loss=nn.MSELoss()
@@ -46,12 +48,11 @@ class DeepQNetwork(nn.Module):
     x=F.relu(self.fc1(state))
     x=F.relu(self.fc2(x))
     actions=self.fc3(x)
-      
+    #x=F.relu(self.fc3(x))
     return actions
 
-
 class Agent():
-  def __init__(self,gamma,epsilon, lr , input_dims , batch_size ,n_actions, max_mem_size = 100000  , eps_end=0.01 , eps_dec = 5e-4):
+  def __init__(self,gamma,epsilon, lr , input_dims , batch_size ,n_actions, max_mem_size = 10000  , eps_end=0.01 , eps_dec = 5e-4):
     self.gamma=gamma
     self.epsilon =epsilon
     self.lr=lr
@@ -61,15 +62,15 @@ class Agent():
     self.action_space =[i for i in range(n_actions)]
     self.mem_size = max_mem_size
     self.batch_size = batch_size
-    self.n_actions=n_actions
+    #self.n_actions=n_actions
     self.mem_cntr =0 # keep track of the position of first available memory 
 
-    self.Q_eval = DeepQNetwork(self.lr,n_actions=n_actions,input_dims= input_dims, fc1_dims=700, fc2_dims=700 , fc3_dims=700)
+    self.Q_eval = DeepQNetwork(self.lr,n_actions=n_actions,input_dims= input_dims, fc1_dims=123, fc2_dims=123)
 
     self.state_memory = np.zeros((self.mem_size,*input_dims),dtype =np.float32)
     self.new_state_memory= np.zeros((self.mem_size , *input_dims),dtype=np.float32)
 
-    self.action_memory=np.zeros(self.mem_size , dtype=np.int32) #discrete actions (19)
+    self.action_memory=np.zeros(self.mem_size , dtype=np.int32) #discrete actions 
     self.reward_memory=np.zeros(self.mem_size,dtype= np.float32)
     self.terminal_memory= np.zeros(self.mem_size,dtype=bool)
 
@@ -88,25 +89,36 @@ class Agent():
 
   def choose_action(self,observation):
     if np.random.random()> self.epsilon:
+      
       state =T.tensor([observation]).to(self.Q_eval.device) #turn observation to tensor and send it to device for computations
       action_list = self.Q_eval.forward(state) #returns the values of each action
       action = T.argmax(action_list).item()
+      #print("exploit:",action)
     else:     #
+      
       action = np.random.choice(self.action_space)
-
+      #print("explore:",action)
     return action
 
   def learn(self):    #fill batch size then learn 
     if self.mem_cntr < self.batch_size :
+     
       return
     
-
+    
     self.Q_eval.optimizer.zero_grad()
 
     #calculate the position of max memory / extract subset of max memories
     max_mem =min(self.mem_cntr , self.mem_size)
-    batch=np.random.choice(max_mem,self.batch_size,replace=False) #We dont keep selecting the same memories more than once
+    
 
+
+    batch=np.random.choice(max_mem,self.batch_size,replace=False) #We dont keep selecting the same memories more than once
+     
+    #batch = np.random.permutation(max_mem)[:self.batch_size]
+    #mem = np.array(exp_buffer)[perm_batch]
+
+    #batch=np.random.choice(max_mem,self.batch_size,replace=False)
     batch_index = np.arange(self.batch_size , dtype=np.int32)
 
     state_batch=T.tensor(self.state_memory[batch]).to(self.Q_eval.device) #make numpy array a pytorch tensor
@@ -115,7 +127,7 @@ class Agent():
     terminal_batch= T.tensor(self.terminal_memory[batch]).to(self.Q_eval.device)
 
     action_batch = self.action_memory[batch] 
-    
+  
     q_eval = self.Q_eval.forward(state_batch)[batch_index,action_batch] #EXEI THEMA
     q_next = self.Q_eval.forward(new_state_batch)
 
@@ -127,6 +139,9 @@ class Agent():
     self.Q_eval.optimizer.step()
 
     self.epsilon = self.epsilon - self.eps_dec if (self.epsilon > self.eps_min)  else self.eps_min
+
+
+  
 
 class All_prints():
   
@@ -168,6 +183,19 @@ class All_prints():
       plt.grid(True)
       plt.show()
 
+  def step_graph(self,step_list,num_of_eps):
+      self.step_list=step_list
+      
+      self.num_of_eps=num_of_eps
+      
+      eps_list=list(range(1,self.num_of_eps+1))#pairnei to proto , den pairnei to teleytaio
+      
+      plt.plot(eps_list,self.step_list)
+      plt.xlabel('Episodes')
+      plt.ylabel('Steps_to_score')
+      plt.grid(True)
+      plt.show()
+
 
   def score_graph(self,score_list,num_of_eps):
       self.score_list=score_list
@@ -186,30 +214,16 @@ class All_prints():
 
 
 
+env = football_env.create_environment(env_name ='academy_empty_goal',render=False,representation='simple115v2')  #List with the 115 states 
 
-
-#ANALYTIKA SXOLIA SE OLO TON KODIKA - MHN AFHSEIS KATI XORIS NA TO KATALABEIS
-#TODO: if active player far from the ball, the reward will lose by the moving distance ---if we go out the square, the reward will lose - forward move else lose
-#TODO: FTIAKSE PIO POLY TA CUSTOM REWARDS
-#TODO:TYPOMA GRAMMI GRAMMI NA DEIS TIN EKPAIDEYSI
-#TODO: MAKE BIGGER BATCHES
-
-
-
-#if __name__ == '__main__':
-#env = football_env.create_environment(env_name ='11_vs_11_easy_stochastic',render=False,representation='simple115')  #List with the 115 states 
-env = football_env.create_environment(env_name ='academy_empty_goal',render=True,representation='simple115v2')  #List with the 115 states 
-#env = gym.make("GFootball-11_vs_11_kaggle-simple115v2-v0") #List with the 115 states
-#env = football_env.create_environment(env_name ='academy_single_goal_versus_lazy',render=False,representation='simple115')
-#env = football_env.create_environment(env_name ='academy_pass_and_shoot_with_keeper',render=False,representation='simple115')
-#env = football_env.create_environment(env_name ='academy_empty_goal',render=False,representation='simple115')  #List with the 115 states 
 
 #CUSTOMIZE ACTION LIST AND OBSERVATIONS
-Action_list=[0,3,4,5,6,7,12,13,14,15,17,18]
-
+Action_list=[4,5,6,12,13,14,15,17,18]
+#print(env.action_space.n)
 #Create Objects
 
-agent = Agent(gamma=0.99,epsilon=1.0 ,batch_size =512,lr=0.00001475 ,input_dims= [115], n_actions = len(Action_list) )
+
+agent = Agent(gamma=0.99,epsilon=1.0 ,batch_size = 64 ,lr=0.00115 ,input_dims= [17], n_actions = len(Action_list) )# batch = best 256
 all_prints = All_prints()
 #cus_rew =Custom_Rewards()
 
@@ -218,87 +232,148 @@ scores,ep_history =[],[]
 steps=0
 terminal =0
 episode =0
+shout =0
 
 
-
-num_of_eps = 5000
+num_of_eps = 801
 eps_rew=0
 rew_list =[]
 score_list = []
+step_list =[]
+goal_steps=[]
+
+
 for i in range(num_of_eps) : 
   score =0 
   done=False 
+  
   observation =env.reset()
+  #print("Pinakas apo observations",observation)
   act =0 #first action will be to move right 
+  shout=0 #mporei na kanei shout 1 fora se kathe ep
+  timer=0 # an klepsei tin mpala kai tin kratisei pano apo 4 steps stamata
+  checkpoint_reward=[1,1,1,1,1]
+  print(observation)
   while not done:
 
     #CUSTOMIZE ACTIONS HERE 
     #An einai i mpala sto 0.5 kai exo katoxi kane shout diladi action 12
     
-    print("------------")
-    print("Ball X-Y-Z Axis",observation[88],observation[89],observation[90],"||","direct",observation[91],observation[92],observation[93],"Katoxi",observation[95],observation[96])
-    print("Player X-Axis Y-Axis",observation[2],observation[3] ,"episode",i)
-    print("------------")
+    #print("------------")
+    #print("Ball X-Y-Z Axis",observation[88],observation[89],observation[90],"||","direct",observation[91],observation[92],observation[93],"Katoxi",observation[95],observation[96])
+    #print("Player X-Axis Y-Axis",observation[2],observation[3] ,"episode",i) SOSTO
+    #print("------------")
 
-
-    if(observation[2]>0.6 and observation[95] == 1):
-      #print("STO IF ")
-      action =6
-      print("EXO MPALA",12)
-      new_observation,reward,done,info = env.step(Action_list[action]) #kanei shout Action 12
-
-    elif observation[88] > observation[2] + 0.05:
-            
-            action =3
-            print("action 5",Action_list[action])
-            new_observation,reward,done,info = env.step(Action_list[action]) #pigainei deksia action 5
-            
-    elif observation[89] > observation[3] + 0.05:
-            action =5
-            new_observation,reward,done,info = env.step(Action_list[action]) #pigainei pano action 3
-            print("action 3",Action_list[action])
-    elif observation[89] < observation[3] - 0.05:
-            action =1
-            new_observation,reward,done,info = env.step(Action_list[action]) #pigainei kato action 7
-            print("action 7",Action_list[action])
-
-    #elif obs['ball'][1] < controlled_player_pos[1] - 0.05:
-            #return Action.Top
-
-
+    #print(observation[0],observation[1],observation[2],observation[3],observation[4],observation[5])
     
-      
-    
-      #print("ball position",observation[88], "Action taken", action)
+
+   
      
       
-    else:
-      if(act ==0 ):
-        action =3
-        print("action 5",Action_list[action])
-        new_observation,reward,done,info = env.step(Action_list[action])
-        act=1
-      #print("Sto Else",observation[94],observation[95],observation[96])
-
-      #EDO THA KANO TA OBSERVATIONS APO 115 -> LIGOTERA ,THA TA PERNAO KAI THA MOY EPISTREFEI ACTION
-      action = agent.choose_action(observation)
+ 
+    if(act ==0 ): # proti praksi ena bima deksia
       
+      # print("action 5",Action_list[action])
+      new_observation,reward,done,info = env.step(5)
       
-      new_observation,reward,done,info = env.step(Action_list[action])
-      print("Den exo mpala",Action_list[action])
-      #print("DEN EXO MPALA",Action_list[action],action)
+      act=1
+      #print(new_observation)
+    #print("Sto Else",observation[94],observation[95],observation[96])
     
 
+    #CUSTOM ACTIONS
+    action = agent.choose_action(observation) # from 1-9s which is index to action list
 
-    #custom reward here
+
+    while((observation[0]<0.65)  and (Action_list[action]==12)): #Den kanei shout ektos periohis
+      action = agent.choose_action(observation)
+     
+      #print("Player Position:",observation[0],observation[1])
+      #print("Player Direction:",observation[2],observation[3])
+      #print("Ball Position:",observation[4],observation[5],observation[6])
+      #print("Ball Direction:",observation[7],observation[8],observation[9])
+
+    if(shout==0):   #ama kanei shout na min kanei tipota meta 
+      new_observation,reward,done,info = env.step(Action_list[action])
+      
+      if(Action_list[action]==12):
+        #print("EKANE SHOUT")
+        shout=1
+    else:
+      #print("MPIKE STO ELSE")
+      new_observation,reward,done,info = env.step(0)
+      action=0 #Ta parakato if den pianoun to Action_list[action]=12 alla gia Action_list[action]=4
+
+    if(observation[16]==1 ):  # an klepsei tin mpala kai tin kratisei pano apo 4 steps stamata
+      timer=timer+1
+      if(timer <= 2 ):
+        reward = reward - 0
+      if (timer>2 and timer <  4 ):
+        reward = reward - 2
+      if (timer>4 and timer <6 ):
+        reward = reward - 6
+      if(timer >= 8):
+        done=1
+        reward = reward -20
+        print("klepsimo")
+    
+    
+    #CUSTOM REWARDS-------------------------------
+
+    
+    
+    if(done ==1 and reward != 1): #if ball is out ,loses -2
+      #print("Ball is out reward:",reward)
+      reward = reward -10 #12
+      print("ball is out -10","episode",i,"Ball Position",observation[8],observation[9],observation[10],"step=",steps)
+      terminal =0
+
+
+    if(reward==1 and  done ==1): #if agent scores , wins +5
+      print("goal","episode",i,"step=",steps)
+      reward += 40 #35
+
+   
+
+      terminal= terminal +1
+      goal_steps.append(steps)
+
+    if((observation[0]<0.65)  and (Action_list[action]==12)): #an shoutarei prin th megali perioxh -2
+      
+      reward= reward -200
+      done=1
+      print("shout ektos periohis","episode",i,"step=",steps)
+      
+    if((observation[0]>0.6) and (Action_list[action]==12)): #an shoutarei mesa ti megali periohi +0.1
+      #reward= reward +0.1
+      print("shout entos periohis Ball Position",observation[8],observation[9],observation[10],"episode",i,"step=",steps)
+      
+    
+    """if(observation[0]>0.5 and checkpoint_reward[0]==1):
+      reward = reward + 1 
+      checkpoint_reward[0]=0
+    elif(observation[0]>0.55 and checkpoint_reward[1]==1):
+      reward=reward+1
+      checkpoint_reward[1]=0
+    elif(observation[0]>0.6 and checkpoint_reward[2]==1):
+      reward=reward+1
+      checkpoint_reward[2]=0
+    elif(observation[0]>0.65 and checkpoint_reward[3]==1):
+      reward=reward+1
+      checkpoint_reward[3]=0
+    if(observation[0]> observation[4] ):
+      reward = reward +5"""
+
+    
+    reward = reward - ( math.sqrt( ((0.935 - observation[8])**2) + (0 -observation[9])**2 ) *0.3) #oso pio makria einai toso perissotero xanei
+    #print("Den exo mpala",Action_list[action])
+    #print("DEN EXO MPALA",Action_list[action],action)
+
+    #END OF CUSTOM REWARDS ----------------------------- 
  
     
-    if( ((observation[88]>0.99) and (observation[95]==1)) or  (observation[89]>0.39) or (observation[89] < -0.39) ):
-      reward =-2
-      print("bgike ektos")
-    #if((reward!=1) or (reward!=-1)):
-      #reward =cus_rew.custom_rew(observation,action,reward,new_observation)
-    score= +reward
+   
+    score+= reward
 
     #for prints
     eps_rew+=reward
@@ -313,41 +388,52 @@ for i in range(num_of_eps) :
     ep_history.append(agent.epsilon)
 
     avg_score= np.mean(scores)
+
+
     steps=steps+1
     
-#---- BE CAREFUL OF THE WHILE !!! HERE IS EPIDOSE ENDING
-  print("Reward",eps_rew,"Episode",i,"Steps" , steps)
+
+#---- BE CAREFUL OF THE WHILE !!! HERE IS EPIDOSE ENDING--------
+  #print("Reward",eps_rew,"Episode",i,"Steps" , steps)
+  step_list.append(steps)
+  steps=0
 
   val = info.values()
   list_val=list(val)
   score_list.append(list_val)
-  
-  #terminate if 500 episodes are correct 
-  if(eps_rew == 1 ):
-    terminal= terminal +1
-    if(terminal == 500):
-      print("500 Episodes with goal")
-      break
-  else:
-      terminal =0 
-  episode = episode +1 
-  
 
   rew_list.append(eps_rew)
-  if (i % 500)== 0 :
-      print("Avg reward", np.mean(rew_list),"episode=",i)
+  episode = episode +1 
+
+  print("---Episode reward:", reward ,"score",list_val,"steps",steps,"episode=",i,"---")
+  #terminate if 500 episodes are correct 
+  if(terminal ==30):
+    print("!!! END OF TRAINING 20 CONTINUOUS GOALS !!!")
+    print("---Avg reward last:", np.mean(rew_list[-10:]),"Avg score last",np.mean(score_list[-10:]),"Avg steps",np.mean(step_list[-10:]),"episode=",i,"---")
+    all_prints.rew_graph(rew_list[-i:],i)
+    all_prints.step_graph(goal_steps[-20:],20)
+    break
+
+# PRINTS
+  if (i % 10)== 0 :
+      print("---Avg reward last:", np.mean(rew_list[-10:]),"Avg score last",np.mean(score_list[-10:]),"Avg steps",np.mean(step_list[-10:]),"episode=",i,"---")
       #print(score_list)
-      
+
+  if (((i % 1000)== 0) and i!=0) :
+      all_prints.score_graph(score_list[-1000:],1000)# graph the last 1000 episodes
+  if(((i%50)==0) and i!=0):
+    all_prints.rew_graph(rew_list[-i:],i)
      
   
   #EPISODE PRINTS
   #all_prints.printstats(i,rew_list,eps_rew,agent.epsilon)
   
-  eps_rew=0
-
-all_prints.score_graph(score_list,i+1)#i = num_of_eps
-print("\n \n")
-all_prints.rew_graph(rew_list,i+1)
+  #eps_rew=0 #GIA NA BGALO SYNOLIKO GRAFIMA TO AFAIRO AYTO
 
 
 
+#print("Avg score last:", np.mean(rew_list[-10:]),"Avg score",np.mean(score_list),"Avg steps",np.mean(step_list[-10:]),"episode=",i)
+#all_prints.score_graph(score_list[-1000:],1000)# graph the last 1000 episodes
+      
+a = len(goal_steps)
+all_prints.step_graph(goal_steps[-a:],len(goal_steps))
