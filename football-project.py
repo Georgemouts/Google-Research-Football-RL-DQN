@@ -325,13 +325,16 @@ for i in range(num_of_eps) :
       reward = reward + 5  
 
 
-    if((observation[0] > observation [4] +0.2) and (Action_list[action]==13) and (sprint ==0)): #An peraso ton antipalo kai kano sprint tin proti fora +5
+    if((observation[0] > observation [4] +0.2) and (Action_list[action]==13) and (sprint ==0)and (observation[14]==1)): #An peraso ton antipalo kai kano sprint tin proti fora +5
       reward =reward + 10 
     
-    
+    if((observation[4] > observation[0])and (Action_list[action]==13 or Action_list[action]==15)): # an einai apenanti o paiktis kai kano sprint -5
+      reward = reward -5
+    if((observation[4]-observation[0]< 0.3)and (observation[4]-observation[0]> 0) and (Action_list[action]==17)):  # an kanei dirbble konta ston antipalo prin erthei se ayton +5 
+      reward = reward + 5                                     #PROSOXI EDO
     if(done ==1 and reward != 1): #if ball is out ,loses -2
       #print("Ball is out reward:",reward)
-      reward = reward -10 #12
+      reward = reward -15 #12
       print("ball is out -10","episode",i,"Ball Position",observation[8],observation[9],observation[10],"step=",steps)
       terminal =0
 
@@ -383,7 +386,7 @@ for i in range(num_of_eps) :
     score+= reward
 
     #for prints
-    eps_rew+=reward
+    
     #all_prints.print_who_scored(reward)
     
 
@@ -402,6 +405,7 @@ for i in range(num_of_eps) :
 
 #---- BE CAREFUL OF THE WHILE !!! HERE IS EPIDOSE ENDING--------
   #print("Reward",eps_rew,"Episode",i,"Steps" , steps)
+  eps_rew+=reward
   step_list.append(steps)
   steps=0
 
