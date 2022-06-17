@@ -230,7 +230,7 @@ all_prints = All_prints()
 scores,ep_history =[],[]
 
 steps=0
-terminal =0
+terminal =0 # an skorarei se pano apo enan arithmo paixnidion stamatao tin ekpaideysi 
 episode =0
 shout =0
 
@@ -254,7 +254,7 @@ for i in range(num_of_eps) :
   timer=0 # an klepsei tin mpala kai tin kratisei pano apo 4 steps stamata
   sprint=0 #an perasei ton antipalo kai kanei sprint tin proti fora  einai +5
   checkpoint_reward=[1,1,1,1,1]
-  print(observation)
+ 
   while not done:
 
     #CUSTOMIZE ACTIONS HERE 
@@ -305,10 +305,31 @@ for i in range(num_of_eps) :
       new_observation,reward,done,info = env.step(0)
       action=0 #Ta parakato if den pianoun to Action_list[action]=12 alla gia Action_list[action]=4
 
+#CUSTOM REWARDS-------------------------------
+    if(done ==1 and reward ==1): #if agent scores , wins +40
+      print("goal","episode",i,"step=",steps)
+      reward += 50 
+
+   
+    if(done ==1 and reward == 0): # an bgei i mpala apo ton antipalo einai -15 , a bgei apo ton paikti einai -5 
+      if(shout ==1 ):
+        reward = reward - 5
+        print("Ball is out by player - 5")
+      else:
+        reward = reward -15 #12
+        print("ball is out -15","episode",i,"Ball Position",observation[8],observation[9],observation[10],"step=",steps)
+        terminal =0
+
+
+
+      terminal= terminal +1
+      goal_steps.append(steps)
+
+
     if(observation[16]==1 ):  # an klepsei tin mpala kai tin kratisei pano apo 4 steps stamata
       timer=timer+1
       if(timer <= 2 ):
-        reward = reward - 0
+        reward = reward - 30
       if (timer>2 and timer <  4 ):
         reward = reward - 2
       if (timer>4 and timer <6 ):
@@ -317,36 +338,34 @@ for i in range(num_of_eps) :
         done=1
         reward = reward -20
         print("klepsimo")
-    
-    
-    #CUSTOM REWARDS-------------------------------
 
-    if((observation[0] > observation [4] +0.2)):
+    if(observation[8]< 0.0 ):  #An i mpala paei piso apo to kentro telos paixnidiou
+      print("Mpala piso apo kentro")
+      reward = reward-20
+      done =1 
+
+    
+
+    if(((observation[0] > observation [4] +0.3) and observation[14]== 1 )):  # an perasei ton antipalo einai +5
+      print("perase ton antipalo")
       reward = reward + 5  
 
-
-    if((observation[0] > observation [4] +0.2) and (Action_list[action]==13) and (sprint ==0)and (observation[14]==1)): #An peraso ton antipalo kai kano sprint tin proti fora +5
-      reward =reward + 10 
+    if(observation[14]== 0): #an den exo stin katoxi tin mpala einai -5
+      reward =reward-5
+    if(observation[14] == 1): # an exo tin katoxi na einai +2
+      reward =reward +2
+    if((observation[0] > observation [4] +0.1) and (Action_list[action]==13) and (sprint ==0)and (observation[14]==1)): #An peraso ton antipalo kai kano sprint tin proti fora +5
+      print("perase ton antipalo kai sprint NO REWARD")
+      #reward =reward + 10 
     
     if((observation[4] > observation[0])and (Action_list[action]==13 or Action_list[action]==15)): # an einai apenanti o paiktis kai kano sprint -5
       reward = reward -5
-    if((observation[4]-observation[0]< 0.3)and (observation[4]-observation[0]> 0) and (Action_list[action]==17)):  # an kanei dirbble konta ston antipalo prin erthei se ayton +5 
-      reward = reward + 5                                     #PROSOXI EDO
-    if(done ==1 and reward != 1): #if ball is out ,loses -2
-      #print("Ball is out reward:",reward)
-      reward = reward -15 #12
-      print("ball is out -10","episode",i,"Ball Position",observation[8],observation[9],observation[10],"step=",steps)
-      terminal =0
+    if((observation[4]-observation[0]< 0.1)and (observation[4]-observation[0]> 0) and (Action_list[action]==17)):  # an kanei dirbble konta ston antipalo prin erthei se ayton +5 
+      #print("dribble")
+      reward = reward + 10                                     #PROSOXI EDO
 
+    
 
-    if(reward==1 and  done ==1): #if agent scores , wins +5
-      print("goal","episode",i,"step=",steps)
-      reward += 40 #35
-
-   
-
-      terminal= terminal +1
-      goal_steps.append(steps)
 
     if((observation[0]<0.65)  and (Action_list[action]==12)): #an shoutarei prin th megali perioxh -2
       
@@ -354,8 +373,8 @@ for i in range(num_of_eps) :
       done=1
       print("shout ektos periohis","episode",i,"step=",steps)
       
-    if((observation[0]>0.6) and (Action_list[action]==12)): #an shoutarei mesa ti megali periohi +0.1
-      #reward= reward +0.1
+    if((observation[0]>0.6) and (Action_list[action]==12)): #an shoutarei mesa ti megali periohi +10
+      reward= reward +10
       print("shout entos periohis Ball Position",observation[8],observation[9],observation[10],"episode",i,"step=",steps)
       
     
@@ -383,7 +402,7 @@ for i in range(num_of_eps) :
  
     
    
-    score+= reward
+    score+= reward/11
 
     #for prints
     
