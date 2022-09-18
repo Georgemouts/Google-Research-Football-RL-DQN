@@ -34,11 +34,4 @@ We dont need:
 The environment has +1 reward for when our team scores and -1 when the opponent teams scores.
 
 Custom Rewards: 
-  1. Positives:
-   - When the agent has the ball in position x > 0.6 and shouts , **Reward += 0.1**
-   - When the agent steals the ball from the opponent , **Reward+= 0.05**
-  
-  2. Negatives:
-   - When the opponent steals the ball , **Reward-=0.5**
-   - When the agent has the ball in position x < 0.6 and shouuts , **Reward += 0.1**
-   - Euclidean distance from the opponents goal: ***Reward = Reward - ( math.sqrt( ((0-obs[5])^2) + (0.94-obs[4])^2 ) *0.2)***
+
