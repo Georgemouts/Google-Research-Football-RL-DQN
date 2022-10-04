@@ -29,9 +29,7 @@ We need :
 We dont need:
   - Target neural network
 
-# Reward System
+# Scenarios
 
-The environment has +1 reward for when our team scores and -1 when the opponent teams scores.
-
-Custom Rewards: 
-
+1. Academy_empty_goal ( agent learns to score doing the minimum number of steps
+2. 1vs1 (agent learn to score with opponent )
