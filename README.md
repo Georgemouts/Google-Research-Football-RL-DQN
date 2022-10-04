@@ -31,5 +31,5 @@ We dont need:
 
 # Scenarios
 
-1. Academy_empty_goal (agent learns to score doing the minimum number of steps) [Empty_goal](https://github.com/Georgemouts/Google-Research-Football-RL-DQN/blob/main/Empty_Goal.ipynb)
-2. 1vs1 (agent learn to score with opponent) [1vs1](https://github.com/Georgemouts/Google-Research-Football-RL-DQN/blob/main/1vs1_.ipynb)
+1. Academy_empty_goal (agent learns to score doing the minimum number of steps) [Empty_goal.ipynb](https://github.com/Georgemouts/Google-Research-Football-RL-DQN/blob/main/Empty_Goal.ipynb)
+2. 1vs1 (agent learn to score with opponent) [1vs1.ipynb](https://github.com/Georgemouts/Google-Research-Football-RL-DQN/blob/main/1vs1_.ipynb)
