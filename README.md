@@ -23,8 +23,8 @@ You can interact with GRF environment and learn how to use it through [Simple_Ob
 Implemented algorithm **Deep Q-Learning(DQN)**  based on [Deepmind's paper](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
 
 We need : 
-  - The replay buffer
-  - EpisolonGreedy action selection
+  - The Experience Replay Buffer
+  - Epsilon Greedy action selection algorithm
 
 We dont need:
   - Target neural network
