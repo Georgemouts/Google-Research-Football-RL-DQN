@@ -31,5 +31,5 @@ We dont need:
 
 # Scenarios
 
-1. Academy_empty_goal ( agent learns to score doing the minimum number of steps )
-2. 1vs1 (agent learn to score with opponent )
+1. Academy_empty_goal (agent learns to score doing the minimum number of steps)
+2. 1vs1 (agent learn to score with opponent)
