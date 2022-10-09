@@ -1,6 +1,7 @@
 # Google-Research-Football-RL :soccer:
 Creating a AI-agent that can play football in the google research football environment.Project based on [Kaggle Competition](https://www.kaggle.com/c/google-football/overview/prizes) .Undergraduate Thesis for Computer Science and Engineering - University of Ioannina.
-Read my paper - [here](https://github.com/Georgemouts/Google-Research-Football-RL-DQN/blob/main/thesis.pdf)
+
+**Read the paper** - [here](https://github.com/Georgemouts/Google-Research-Football-RL-DQN/blob/main/thesis.pdf)
 
 
 
